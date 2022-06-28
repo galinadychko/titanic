@@ -2,7 +2,18 @@ import numpy as np
 import pandas as pd
 
 
-def count_bins_in_numeric_col(col_benchmark: pd.Series, col_input: pd.Series, q, zero_offset):
+def count_bins_in_numeric_col(col_benchmark: pd.Series,
+                              col_input: pd.Series,
+                              q: int, zero_offset: float) -> pd.DataFrame:
+    """
+    Split numeric benchmark column into quartiles and use them to split another input column.
+    Compute percentage of occurrences of each bin.
+    :param col_benchmark:   pd.Series, column from benchmark
+    :param col_input:       pd.Series, column from inference
+    :param q:               int, number of quantiles used to make a split
+    :param zero_offset:     float, a value to replace 0 and NaNs in occurrences
+    :return:                pd.DataFrame with columns: {"quantile", "n_benchmark", "n"}
+    """
     benchmark_bins, bins_unique = pd.qcut(col_benchmark, q=q, duplicates="drop", retbins=True)
     col_bins = pd.cut(col_input, bins=bins_unique)
     df_bins = pd.DataFrame.from_dict(
@@ -28,7 +39,14 @@ def count_bins_in_numeric_col(col_benchmark: pd.Series, col_input: pd.Series, q,
     return df_bins_counts
 
 
-def count_bins_in_categorical_col(col_benchmark: pd.Series, col_input: pd.Series, q: int, zero_offset: float):
+def count_bins_in_categorical_col(col_benchmark: pd.Series, col_input: pd.Series, zero_offset: float):
+    """
+    Compute occurrences of each unique value
+    :param col_benchmark:   pd.Series, column from benchmark
+    :param col_input:       pd.Series, column from inference
+    :param zero_offset:     float, a value to replace 0 and NaNs in occurrences
+    :return:                pd.DataFrame with columns: {"values", "n_benchmark", "n"}
+    """
     df_counts_1 = col_benchmark.value_counts(normalize=True).reset_index(name="n_benchmark").rename(
         columns={"index": "values"})
     df_counts_2 = col_input.value_counts(normalize=True).reset_index(name="n").rename(columns={"index": "values"})
@@ -43,6 +61,15 @@ def count_bins_in_categorical_col(col_benchmark: pd.Series, col_input: pd.Series
 
 
 def psi(col_benchmark: pd.Series, col_input: pd.Series, input_type: str, q: int = 10, zero_offset: float = 0.001):
+    """
+    Split the input data if needed, compute occurrences, compute psi value based
+    :param col_benchmark:   pd.Series, column from benchmark
+    :param col_input:       pd.Series, column from inference
+    :param input_type:      str, if an input columns are "numeric" or "categorical"
+    :param q:               int, number of quantiles used to split numeric data
+    :param zero_offset:     float, a value to replace 0 and NaNs in occurrences
+    :return:                pd.DataFrame, with psi value per bin/unique categorical value
+    """
     if input_type == "numeric":
         df_counts = count_bins_in_numeric_col(
             col_benchmark=col_benchmark, col_input=col_input, q=q, zero_offset=zero_offset
