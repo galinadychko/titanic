@@ -1,6 +1,8 @@
 .venv/
 .idea/
 __pycache__/
+data/
+models/
 *.py[cod]
 *$py.class
 
