@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .venv/
 .idea/
 __pycache__/
@@ -130,4 +131,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
 >>>>>>> master
+=======
+>>>>>>> 77aa07fc4ec499408ad051efca22b5f9d46451d7
