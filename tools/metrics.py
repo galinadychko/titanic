@@ -76,7 +76,7 @@ def psi(col_benchmark: pd.Series, col_input: pd.Series, input_type: str, q: int 
         )
     elif input_type == "categorical":
         df_counts = count_bins_in_categorical_col(
-            col_benchmark=col_benchmark, col_input=col_input, q=q, zero_offset=zero_offset
+            col_benchmark=col_benchmark, col_input=col_input, zero_offset=zero_offset
         )
     else:
         raise NotImplementedError
